@@ -1,16 +1,15 @@
-# React + Vite
+# Executar a aplicação React
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+```bash
+cd client
+npm install
+npm run dev
+```
 
-Currently, two official plugins are available:
+## View Source
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Abra o View Source do site Express (porta 3000) e o da app React (porta 5173). O HTML do Express é construído no servidor, enquanto o HTML do React é o template do Vite e o conteúdo é renderizado pelo JavaScript no navegador. Para saber isso, compare o conteúdo mostrado no View Source com as respostas do servidor e com o bundle carregado pelo navegador.
 
-## React Compiler
+## Network
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Abra a guia Network e filtre as cartas ou as mudanças de página. O número exato de requests depende do site e do fluxo testado, portanto não é possível afirmar um valor único sem observá-lo. O Express faz requests ao backend e o React faz requests ao Vite/ao backend conforme carrega os dados e os recursos. Essa diferença acontece porque o Express fornece a página HTML no servidor, enquanto o React pode renderizar o conteúdo no cliente e carregar recursos adicionais.
