@@ -3,6 +3,7 @@ import Card from "./Card";
 
 function App() {
   const [cards, setCards] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("Todas");
   const [search, setSearch] = useState("");
   const [randomCard, setRandomCard] = useState(null);
@@ -11,7 +12,8 @@ function App() {
   useEffect(() => {
     fetch("http://localhost:3000/api/cartas")
       .then((res) => res.json())
-      .then((data) => { setCards(data); });
+      .then((data) => { setCards(data); })
+      .finally(() => { setLoading(false); });
   }, []);
 
   let visible = cards
@@ -33,6 +35,8 @@ function App() {
       <p>
         Tenho {cards.length} cartas · a mostrar {visible.length}
       </p>
+
+      {loading && <p>A carregar cartas…</p>}
 
       <div>
         <button onClick={() => setFilter("Todas")}>Todas</button>
