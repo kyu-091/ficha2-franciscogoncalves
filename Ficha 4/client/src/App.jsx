@@ -3,6 +3,7 @@ import Card from "./Card";
 
 function App() {
   const [cards, setCards] = useState([]);
+  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("Todas");
   const [search, setSearch] = useState("");
@@ -11,8 +12,9 @@ function App() {
 
   useEffect(() => {
     fetch("http://localhost:3000/api/cartas")
-      .then((res) => res.json())
+      .then((res) => { return res.json(); })
       .then((data) => { setCards(data); })
+      .catch((error) => { console.error("Erro ao carregar cartas:", error); setError(error); })
       .finally(() => { setLoading(false); });
   }, []);
 
@@ -37,6 +39,7 @@ function App() {
       </p>
 
       {loading && <p>A carregar cartas…</p>}
+      {error && <p>Erro ao carregar cartas.</p>}
 
       <div>
         <button onClick={() => setFilter("Todas")}>Todas</button>
