@@ -7,6 +7,7 @@ function App() {
   const [type, setType] = useState("Criatura");
   const [attack, setAttack] = useState("");
   const [error, setError] = useState(null);
+  const [submitError, setSubmitError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("Todas");
   const [search, setSearch] = useState("");
@@ -21,14 +22,30 @@ function App() {
       .finally(() => { setLoading(false); });
   }, []);
 
-  function addCard(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
 
-    const card = { name, type, attack: Number(attack) };
-    setCards([...cards, card]);
-    setName("");
-    setType("Criatura");
-    setAttack("");
+    setSubmitError(null);
+    try {
+      const response = await fetch("http://localhost:3000/api/cartas", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, type, attack: Number(attack) }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Não foi possível adicionar a carta.");
+      }
+
+      const card = await response.json();
+      setCards([...cards, card]);
+      setName("");
+      setType("Criatura");
+      setAttack("");
+    } catch (error) {
+      console.error("Erro ao adicionar carta:", error);
+      setSubmitError(error);
+    }
   }
 
   let visible = cards
@@ -55,7 +72,7 @@ function App() {
       {error && <p>Erro ao carregar cartas.</p>}
 
       <h2>Adicionar carta</h2>
-      <form onSubmit={addCard}>
+      <form onSubmit={handleSubmit}>
         <label>
           Nome
           <input
@@ -83,6 +100,7 @@ function App() {
         </label>
         <button type="submit">Adicionar</button>
       </form>
+      {submitError && <p>Erro ao adicionar carta.</p>}
 
       <div>
         <button onClick={() => setFilter("Todas")}>Todas</button>
