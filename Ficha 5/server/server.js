@@ -1,7 +1,11 @@
 const express = require("express");
+const cors = require("cors");
 
 const app = express();
 const PORT = 3000;
+
+app.use(cors({ origin: "http://localhost:5173" }));
+app.use(express.json());
 
 const cards = [
   { name: "Dragão de Cobalto", type: "Criatura", attack: 7, defense: 5 },
@@ -73,8 +77,13 @@ app.get("/agora", (req, res) => {
 });
 
 app.get("/api/cartas", (req, res) => {
-  res.set("Access-Control-Allow-Origin", "http://localhost:5173");
   res.json(cards);
+});
+
+app.post("/api/cartas", (req, res) => {
+  const card = req.body;
+  cards.push(card);
+  res.status(201).json(card);
 });
 
 app.use((req, res) => {
