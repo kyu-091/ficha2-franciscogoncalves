@@ -4,7 +4,7 @@ import Card from "./Card";
 function App() {
   const [cards, setCards] = useState([]);
   const [name, setName] = useState("");
-  const [type, setType] = useState("Criatura");
+  const [type, setType] = useState("");
   const [attack, setAttack] = useState("");
   const [error, setError] = useState(null);
   const [submitError, setSubmitError] = useState(null);
@@ -34,17 +34,17 @@ function App() {
       });
 
       if (!response.ok) {
-        throw new Error("Não foi possível adicionar a carta.");
+        throw new Error(`HTTP ${response.status}`);
       }
 
       const card = await response.json();
       setCards([...cards, card]);
       setName("");
-      setType("Criatura");
+      setType("");
       setAttack("");
     } catch (error) {
       console.error("Erro ao adicionar carta:", error);
-      setSubmitError(error);
+      setSubmitError(error instanceof Error ? error.message : "Erro ao adicionar carta.");
     }
   }
 
@@ -78,12 +78,12 @@ function App() {
           <input
             value={name}
             onChange={(event) => setName(event.target.value)}
-            required
           />
         </label>
         <label>
           Tipo
           <select value={type} onChange={(event) => setType(event.target.value)}>
+            <option value="">Escolhe um tipo</option>
             <option value="Criatura">Criatura</option>
             <option value="Feitiço">Feitiço</option>
           </select>
@@ -100,7 +100,7 @@ function App() {
         </label>
         <button type="submit">Adicionar</button>
       </form>
-      {submitError && <p>Erro ao adicionar carta.</p>}
+      {submitError && <p role="alert">{submitError}</p>}
 
       <div>
         <button onClick={() => setFilter("Todas")}>Todas</button>

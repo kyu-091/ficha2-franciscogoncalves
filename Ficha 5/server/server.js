@@ -79,6 +79,16 @@ app.get("/api/cartas", (req, res) => {
 
 app.post("/api/cartas", (req, res) => {
   const card = req.body;
+  if (
+    !card ||
+    typeof card.name !== "string" ||
+    !card.name.trim() ||
+    typeof card.type !== "string" ||
+    !card.type.trim()
+  ) {
+    return res.status(400).json({ error: "Nome e tipo são obrigatórios." });
+  }
+
   const updatedCards = [...cards, card];
   fs.writeFileSync(cardsFile, JSON.stringify(updatedCards, null, 2));
   cards.push(card);
