@@ -9,6 +9,7 @@ function App() {
   const [error, setError] = useState(null);
   const [submitError, setSubmitError] = useState(null);
   const [deleteError, setDeleteError] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("Todas");
   const [search, setSearch] = useState("");
@@ -27,6 +28,7 @@ function App() {
     event.preventDefault();
 
     setSubmitError(null);
+    setSubmitting(true);
     try {
       const response = await fetch("http://localhost:3000/api/cartas", {
         method: "POST",
@@ -46,6 +48,8 @@ function App() {
     } catch (error) {
       console.error("Erro ao adicionar carta:", error);
       setSubmitError(error instanceof Error ? error.message : "Erro ao adicionar carta.");
+    } finally {
+      setSubmitting(false);
     }
   }
 
@@ -118,7 +122,9 @@ function App() {
             required
           />
         </label>
-        <button type="submit">Adicionar</button>
+        <button type="submit" disabled={submitting}>
+          {submitting ? "A enviar…" : "Adicionar"}
+        </button>
       </form>
       {submitError && <p role="alert">{submitError}</p>}
 

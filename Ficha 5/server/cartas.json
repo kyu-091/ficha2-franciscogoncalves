@@ -39,5 +39,11 @@
     "name": "mimikyu",
     "type": "Criatura",
     "attack": 999
+  },
+  {
+    "name": "destroyman iii",
+    "type": "Criatura",
+    "attack": 67,
+    "id": 8
   }
 ]
