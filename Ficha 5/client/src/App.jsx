@@ -8,6 +8,7 @@ function App() {
   const [attack, setAttack] = useState("");
   const [error, setError] = useState(null);
   const [submitError, setSubmitError] = useState(null);
+  const [deleteError, setDeleteError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("Todas");
   const [search, setSearch] = useState("");
@@ -45,6 +46,25 @@ function App() {
     } catch (error) {
       console.error("Erro ao adicionar carta:", error);
       setSubmitError(error instanceof Error ? error.message : "Erro ao adicionar carta.");
+    }
+  }
+
+  async function handleDelete(id) {
+    setDeleteError(null);
+    try {
+      const response = await fetch(`http://localhost:3000/api/cartas/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+
+      setCards((currentCards) => currentCards.filter((card) => card.id !== id));
+      setRandomCard((currentCard) => currentCard?.id === id ? null : currentCard);
+    } catch (error) {
+      console.error("Erro ao apagar carta:", error);
+      setDeleteError(error instanceof Error ? error.message : "Erro ao apagar carta.");
     }
   }
 
@@ -122,10 +142,11 @@ function App() {
       ) : (
         <ul>
           {visible.map((card) => (
-            <Card key={card.name} {...card} />
+            <Card key={card.id} {...card} onDelete={handleDelete} />
           ))}
         </ul>
       )}
+      {deleteError && <p role="alert">{deleteError}</p>}
 
       <h2>Carta à sorte</h2>
       <button onClick={pickRandom}>Escolher outra</button>

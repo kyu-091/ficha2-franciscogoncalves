@@ -89,10 +89,27 @@ app.post("/api/cartas", (req, res) => {
     return res.status(400).json({ error: "Nome e tipo são obrigatórios." });
   }
 
-  const updatedCards = [...cards, card];
+  const nextId = cards.reduce(
+    (maxId, existingCard) => Math.max(maxId, existingCard.id),
+    0
+  ) + 1;
+  const newCard = { ...card, id: nextId };
+  const updatedCards = [...cards, newCard];
   fs.writeFileSync(cardsFile, JSON.stringify(updatedCards, null, 2));
-  cards.push(card);
-  res.status(201).json(card);
+  cards.push(newCard);
+  res.status(201).json(newCard);
+});
+
+app.delete("/api/cartas/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const updatedCards = cards.filter((card) => card.id !== id);
+  if (updatedCards.length === cards.length) {
+    return res.status(404).json({ error: "Carta não encontrada." });
+  }
+
+  fs.writeFileSync(cardsFile, JSON.stringify(updatedCards, null, 2));
+  cards.splice(0, cards.length, ...updatedCards);
+  res.status(204).end();
 });
 
 app.use((req, res) => {
